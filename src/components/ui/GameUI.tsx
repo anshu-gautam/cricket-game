@@ -43,11 +43,22 @@ const Button = styled.button`
   &:hover {
     background: #34495e;
   }
+
+  &:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+  }
 `;
 
 const GameUI = () => {
-  const { score, gameMode, matchFormat, isPlaying, startMatch, endMatch } =
-    useGameStore();
+  const { score, isPlaying, gameMode, matchFormat } = useGameStore();
+  const { startMatch, endMatch, resetGame } = useGameStore(
+    (state) => state.actions
+  );
+
+  const formatOvers = () => {
+    return `${score.overs}.${score.balls}`;
+  };
 
   return (
     <>
@@ -56,9 +67,7 @@ const GameUI = () => {
           <h2>
             Score: {score.runs}/{score.wickets}
           </h2>
-          <p>
-            Overs: {score.overs}.{score.balls}
-          </p>
+          <p>Overs: {formatOvers()}</p>
           {matchFormat && <p>Format: {matchFormat}</p>}
           {gameMode && <p>Mode: {gameMode}</p>}
         </ScoreBoard>
@@ -66,7 +75,17 @@ const GameUI = () => {
 
       <Controls>
         {!isPlaying ? (
-          <Button onClick={() => startMatch()}>Start Match</Button>
+          <>
+            <Button onClick={() => startMatch()}>Start Match</Button>
+            <Button
+              onClick={() => resetGame()}
+              disabled={
+                score.runs === 0 && score.wickets === 0 && score.overs === 0
+              }
+            >
+              Reset Game
+            </Button>
+          </>
         ) : (
           <Button onClick={() => endMatch()}>End Match</Button>
         )}

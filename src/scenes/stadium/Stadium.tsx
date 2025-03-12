@@ -2,11 +2,10 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { usePlane } from "@react-three/cannon";
 import { MeshStandardMaterial } from "three";
+import { TextureLoader, RepeatWrapping } from 'three'
+import { useLoader } from '@react-three/fiber'
 
 const Stadium = () => {
-  // Create a reference for the ground
-  const groundRef = useRef();
-
   // Create a physics-enabled ground plane
   const [ref] = usePlane(() => ({
     rotation: [-Math.PI / 2, 0, 0],
@@ -14,19 +13,21 @@ const Stadium = () => {
     type: "Static",
   }));
 
-  // Create the cricket pitch dimensions (in meters)
-  const pitchLength = 20.12; // Length of a cricket pitch
-  const pitchWidth = 3.05; // Width of a cricket pitch
+  // Cricket pitch dimensions (in meters)
+  const pitchLength = 20.12; // Standard cricket pitch length
+  const pitchWidth = 3.05; // Standard cricket pitch width
+
+  // Create the field dimensions
+  const fieldRadius = 70; // Typical cricket field radius
 
   return (
     <group>
-      {/* Ground */}
+      {/* Main Ground */}
       <mesh ref={ref} receiveShadow>
-        <planeGeometry args={[100, 100]} />
+        <planeGeometry args={[150, 150]} />
         <meshStandardMaterial
           color="#2f6c2f"
-          roughness={0.8}
-          metalness={0.1}
+          roughness={1}
         />
       </mesh>
 
@@ -38,21 +39,39 @@ const Stadium = () => {
       >
         <planeGeometry args={[pitchWidth, pitchLength]} />
         <meshStandardMaterial
-          color="#c4a484"
-          roughness={0.3}
-          metalness={0.2}
+          color="#d4b886"
+          roughness={0.8}
         />
       </mesh>
 
-      {/* Boundary Circle */}
-      <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0, 45, 64]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          opacity={0.5}
-          transparent
-          roughness={0.4}
-        />
+      {/* Crease Lines */}
+      <group>
+        {/* Batting Crease */}
+        <mesh
+          position={[0, 0.02, pitchLength/2 - 1.22]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <planeGeometry args={[pitchWidth + 0.5, 0.1]} />
+          <meshStandardMaterial color="white" />
+        </mesh>
+
+        {/* Bowling Crease */}
+        <mesh
+          position={[0, 0.02, -pitchLength/2 + 1.22]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <planeGeometry args={[pitchWidth + 0.5, 0.1]} />
+          <meshStandardMaterial color="white" />
+        </mesh>
+      </group>
+
+      {/* Boundary Rope */}
+      <mesh
+        position={[0, 0.1, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <ringGeometry args={[fieldRadius - 0.2, fieldRadius, 64]} />
+        <meshStandardMaterial color="white" />
       </mesh>
     </group>
   );

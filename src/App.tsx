@@ -1,13 +1,20 @@
 import CricketGame from "./components/game/CricketGame";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  createRoutesFromElements,
-  Route,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { startTransition } from "react";
 
 const router = createBrowserRouter(
-  createRoutesFromElements(<Route path="/" element={<CricketGame />} />)
+  [
+    {
+      path: "/",
+      element: <CricketGame />,
+    },
+  ],
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
+  }
 );
 
 function App() {

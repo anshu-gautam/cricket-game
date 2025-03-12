@@ -3,8 +3,7 @@ import { OrbitControls } from "@react-three/drei";
 import { Physics } from "@react-three/cannon";
 import Stadium from "../../scenes/stadium/Stadium";
 import Ball from "./Ball";
-import Bat from "./Bat";
-import Player from "./Player";
+import Batsman from "./Batsman";
 import { Suspense } from "react";
 import LoadingScreen from "../ui/LoadingScreen";
 import GameUI from "../ui/GameUI";
@@ -17,9 +16,8 @@ const CricketGame = () => {
     <div style={{ width: "100vw", height: "100vh", background: "#87CEEB" }}>
       <Canvas
         shadows
-        camera={{ position: [20, 20, 20], fov: 50 }}
+        camera={{ position: [0, 15, 20], fov: 45 }}
         gl={{ antialias: true }}
-        dpr={[1, 2]}
       >
         <Suspense fallback={null}>
           <color attach="background" args={["#87CEEB"]} />
@@ -49,24 +47,15 @@ const CricketGame = () => {
             <Stadium />
             {isPlaying && (
               <>
-                {/* Batting position at one end of the pitch */}
-                <group position={[0, 0, 8]}>
-                  <Player position={[0, 1, 0]} />
-                  <Bat
-                    position={[0.5, 1.2, 0]}
-                    rotation={[0, Math.PI / 2, 0]}
-                  />
-                </group>
-
-                {/* Bowling position at the other end */}
-                <Ball position={[0, 1.5, -8]} />
+                <Batsman />
+                <Ball />
               </>
             )}
           </Physics>
           <OrbitControls
             makeDefault
-            maxPolarAngle={Math.PI / 2}
-            minDistance={5}
+            maxPolarAngle={Math.PI / 2.5}
+            minDistance={10}
             maxDistance={50}
             target={[0, 1, 8]} // Focus camera on batting position
           />
@@ -75,17 +64,18 @@ const CricketGame = () => {
       <div
         style={{
           position: "fixed",
-          bottom: "100px",
+          bottom: "120px",
           left: "50%",
           transform: "translateX(-50%)",
           color: "white",
-          textAlign: "center",
           backgroundColor: "rgba(0,0,0,0.7)",
-          padding: "10px",
-          borderRadius: "5px",
+          padding: "15px",
+          borderRadius: "8px",
+          textAlign: "center"
         }}
       >
-        Press SPACE to swing the bat
+        <p>Press <strong>B</strong> to bowl</p>
+        <p>Press <strong>SPACE</strong> to bat</p>
       </div>
       <GameUI />
       <LoadingScreen />
